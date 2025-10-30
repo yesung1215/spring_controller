@@ -9,6 +9,6 @@
     <select id="selectAll" parameterType="Long" resultType="String">
         SELECT MEMBER_SOCIAL_PROVIDER
         FROM TBL_MEMBER_SOCIAL
-        WHERE ID = #{id}
+        WHERE MEMBER_ID = #{memberId}
     </select>
 </mapper>

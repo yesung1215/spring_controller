@@ -86,10 +86,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean validateRefreshToken(TokenDTO tokenDTO) {
+
+//        email로 아이디를 찾아와서
         Long id = tokenDTO.getMemberId();
         String refreshToken = tokenDTO.getRefreshToken();
-
         String key = REFRESH_TOKEN_PREFIX + id;
+
         try {
             String storedToken = redisTemplate.opsForValue().get(key).toString();
 
@@ -106,7 +108,11 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public String reissueAccessToken(TokenDTO tokenDTO) {
         Map<String,String> claim = new HashMap<>();
-        Long id =  tokenDTO.getMemberId();
+
+//        토큰에서 email을 가져온다.
+        String memberEmail = (String)jwtTokenUtil.getMemberEmailFromToken(tokenDTO.getRefreshToken()).get("memberEmail");
+        Long id =  memberDAO.findIdByMemberEmail(memberEmail);
+        tokenDTO.setMemberId(id);
 
         // 1. 기존 RefreshToken 또는 AccessToken 블랙리스트인지 확인
         if(isBlackedRefreshToken(tokenDTO)) {
